@@ -1,0 +1,91 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f2f2f2;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.bookshelf {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.shelf {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  width: 45%;
+  background-color: #fff;
+}
+
+.shelf h2 {
+  margin-top: 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.book {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.book button {
+  padding: 5px 10px;
+  margin-left: 5px;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.book button.move-btn {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.book button.delete-btn {
+  background-color: #f44336;
+  color: #fff;
+}
+
+form {
+  margin-top: 20px;
+  text-align: center;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+form input,
+form button {
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}

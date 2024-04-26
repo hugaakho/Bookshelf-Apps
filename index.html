@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookshelf Apps</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <h1>Bookshelf Apps</h1>
+    </header>
+    <br />
+    <div class="bookshelf">
+      <div class="shelf" id="unfinished-shelf">
+        <h2>Belum Selesai Dibaca</h2>
+        <div id="unfinished-books"></div>
+      </div>
+      <div class="shelf" id="finished-shelf">
+        <h2>Selesai Dibaca</h2>
+        <div id="finished-books"></div>
+      </div>
+    </div>
+    <br />
+    <h2>Tambah Buku</h2>
+    <form id="add-book-form">
+      <label for="title">Judul:</label><br />
+      <input type="text" id="title" name="title" required /><br />
+      <label for="author">Penulis:</label><br />
+      <input type="text" id="author" name="author" required /><br />
+      <label for="year">Tahun:</label><br />
+      <input type="number" id="year" name="year" required /><br /><br />
+      <label for="isComplete">Selesai Dibaca:</label>
+      <input type="checkbox" id="isComplete" name="isComplete" /><br /><br />
+      <button type="submit">Tambahkan Buku</button>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const addBookForm = document.getElementById("add-book-form");
+        const titleInput = document.getElementById("title");
+        const authorInput = document.getElementById("author");
+        const yearInput = document.getElementById("year");
+        const isCompleteCheckbox = document.getElementById("isComplete");
+        const unfinishedBooksContainer = document.getElementById("unfinished-books");
+        const finishedBooksContainer = document.getElementById("finished-books");
+
+        function generateId() {
+          return +new Date();
+        }
+
+        function renderBook(book) {
+          const bookElement = document.createElement("div");
+          bookElement.classList.add("book");
+          bookElement.innerHTML = `
+          <strong>${book.title}</strong> - ${book.author} (${book.year})<br>
+          <button class="move-btn">${book.isComplete ? "Belum Selesai Dibaca" : "Selesai Dibaca"}</button>
+          <button class="delete-btn">Hapus</button>
+        `;
+          return bookElement;
+        }
+
+        function renderBooks(books, container) {
+          container.innerHTML = "";
+          books.forEach((book) => {
+            const bookElement = renderBook(book);
+            container.appendChild(bookElement);
+          });
+        }
+
+        function moveBook(bookId, sourceShelf, targetShelf) {
+          const bookIndex = sourceShelf.findIndex((book) => book.id === bookId);
+          const book = sourceShelf.splice(bookIndex, 1)[0];
+          book.isComplete = !book.isComplete;
+          targetShelf.push(book);
+
+          saveData();
+          renderBooks(unfinishedBooks, unfinishedBooksContainer);
+          renderBooks(finishedBooks, finishedBooksContainer);
+        }
+
+        function deleteBook(bookId, shelf) {
+          const bookIndex = shelf.findIndex((book) => book.id === bookId);
+          shelf.splice(bookIndex, 1);
+
+          saveData();
+          renderBooks(unfinishedBooks, unfinishedBooksContainer);
+          renderBooks(finishedBooks, finishedBooksContainer);
+        }
+
+        addBookForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          const newBook = {
+            id: generateId(),
+            title: titleInput.value,
+            author: authorInput.value,
+            year: parseInt(yearInput.value),
+            isComplete: isCompleteCheckbox.checked,
+          };
+          if (newBook.title && newBook.author && !isNaN(newBook.year)) {
+            if (newBook.isComplete) {
+              finishedBooks.push(newBook);
+            } else {
+              unfinishedBooks.push(newBook);
+            }
+
+            saveData();
+            renderBooks(unfinishedBooks, unfinishedBooksContainer);
+            renderBooks(finishedBooks, finishedBooksContainer);
+
+            addBookForm.reset();
+          } else {
+            alert("Silakan lengkapi data buku terlebih dahulu!");
+          }
+        });
+
+        function saveData() {
+          localStorage.setItem("unfinishedBooks", JSON.stringify(unfinishedBooks));
+          localStorage.setItem("finishedBooks", JSON.stringify(finishedBooks));
+        }
+
+        let unfinishedBooks = JSON.parse(localStorage.getItem("unfinishedBooks")) || [];
+        let finishedBooks = JSON.parse(localStorage.getItem("finishedBooks")) || [];
+        renderBooks(unfinishedBooks, unfinishedBooksContainer);
+        renderBooks(finishedBooks, finishedBooksContainer);
+
+        document.addEventListener("click", function (event) {
+          const target = event.target;
+          if (target.classList.contains("move-btn")) {
+            const bookId = parseInt(target.parentElement.dataset.id);
+            const sourceShelf = target.parentElement.parentElement.id === "unfinished-books" ? unfinishedBooks : finishedBooks;
+            const targetShelf = sourceShelf === unfinishedBooks ? finishedBooks : unfinishedBooks;
+            moveBook(bookId, sourceShelf, targetShelf);
+          } else if (target.classList.contains("delete-btn")) {
+            const bookId = parseInt(target.parentElement.dataset.id);
+            const shelf = target.parentElement.parentElement.id === "unfinished-books" ? unfinishedBooks : finishedBooks;
+            deleteBook(bookId, shelf);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
